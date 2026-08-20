@@ -324,8 +324,15 @@
 
         <div class="carousel-shell reveal">
           <div class="carousel-controls" aria-label="Galerie steuern">
-            <button type="button" class="carousel-button" data-carousel-direction="prev" aria-label="Vorherige Arbeiten"><span aria-hidden="true">←</span></button>
-            <button type="button" class="carousel-button" data-carousel-direction="next" aria-label="Nächste Arbeiten"><span aria-hidden="true">→</span></button>
+            <div class="carousel-status" aria-hidden="true">
+              <span data-carousel-current>01</span>
+              <i><b></b></i>
+              <span data-carousel-total>07</span>
+            </div>
+            <div class="carousel-navigation">
+              <button type="button" class="carousel-button" data-carousel-direction="prev" aria-label="Vorherige Arbeit"><span aria-hidden="true">←</span></button>
+              <button type="button" class="carousel-button" data-carousel-direction="next" aria-label="Nächste Arbeit"><span aria-hidden="true">→</span></button>
+            </div>
           </div>
           <div class="poster-carousel" id="poster-carousel" tabindex="0" aria-label="Auswahl gestalteter Poster und Medien">
             <button class="poster-slide" type="button" data-poster-src="https://raw.githubusercontent.com/rhake14/deposit/main/poster7.png" data-poster-title="HörHanse 2026, Lübeck, DE">
@@ -350,6 +357,7 @@
               <img src="https://raw.githubusercontent.com/rhake14/deposit/main/poster4.png" alt="Poster für die 16th ICMPC in Tokio" loading="lazy"><span>16th ICMPC, Tokyo, Japan</span>
             </button>
           </div>
+          <input class="carousel-slider" id="carousel-slider" type="range" min="0" max="100" value="0" step="0.1" aria-label="Posterkarussell horizontal verschieben">
         </div>
       </div>
     </section>

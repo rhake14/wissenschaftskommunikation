@@ -112,24 +112,110 @@ challengeOptions.forEach((option) => {
 const posterCarousel = document.querySelector('#poster-carousel');
 const carouselButtons = document.querySelectorAll('[data-carousel-direction]');
 const posterSlides = document.querySelectorAll('.poster-slide');
+const carouselCurrent = document.querySelector('[data-carousel-current]');
+const carouselTotal = document.querySelector('[data-carousel-total]');
+const carouselShell = document.querySelector('.carousel-shell');
+const carouselSlider = document.querySelector('#carousel-slider');
 const posterDialog = document.querySelector('#poster-dialog');
 const posterDialogImage = document.querySelector('#poster-dialog-image');
 const posterDialogTitle = document.querySelector('#poster-dialog-title');
 const posterDialogClose = document.querySelector('.dialog-close');
 
+const updateCarouselStatus = () => {
+  if (!posterCarousel || !posterSlides.length) return;
+  const target = posterCarousel.scrollLeft + 40;
+  let currentIndex = 0;
+  let closestDistance = Number.POSITIVE_INFINITY;
+
+  posterSlides.forEach((slide, index) => {
+    const distance = Math.abs(slide.offsetLeft - target);
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      currentIndex = index;
+    }
+  });
+
+  if (carouselCurrent) carouselCurrent.textContent = String(currentIndex + 1).padStart(2, '0');
+  if (carouselTotal) carouselTotal.textContent = String(posterSlides.length).padStart(2, '0');
+  if (carouselShell) carouselShell.style.setProperty('--carousel-progress', `${((currentIndex + 1) / posterSlides.length) * 100}%`);
+  if (carouselSlider) {
+    const maximumScroll = posterCarousel.scrollWidth - posterCarousel.clientWidth;
+    carouselSlider.value = maximumScroll > 0 ? String((posterCarousel.scrollLeft / maximumScroll) * 100) : '0';
+  }
+};
+
+let carouselFrame;
+posterCarousel?.addEventListener('scroll', () => {
+  cancelAnimationFrame(carouselFrame);
+  carouselFrame = requestAnimationFrame(updateCarouselStatus);
+}, { passive: true });
+
+window.addEventListener('resize', updateCarouselStatus);
+updateCarouselStatus();
+
+carouselSlider?.addEventListener('input', () => {
+  if (!posterCarousel) return;
+  const maximumScroll = posterCarousel.scrollWidth - posterCarousel.clientWidth;
+  posterCarousel.scrollLeft = maximumScroll * (Number(carouselSlider.value) / 100);
+});
+
+let carouselPointerId = null;
+let carouselDragStartX = 0;
+let carouselDragStartScroll = 0;
+let carouselDragged = false;
+
+posterCarousel?.addEventListener('pointerdown', (event) => {
+  if (event.pointerType !== 'mouse' || event.button !== 0) return;
+  carouselPointerId = event.pointerId;
+  carouselDragStartX = event.clientX;
+  carouselDragStartScroll = posterCarousel.scrollLeft;
+  carouselDragged = false;
+});
+
+posterCarousel?.addEventListener('pointermove', (event) => {
+  if (event.pointerId !== carouselPointerId) return;
+  const distance = event.clientX - carouselDragStartX;
+  if (Math.abs(distance) <= 5) return;
+  if (!carouselDragged) {
+    carouselDragged = true;
+    posterCarousel.classList.add('is-dragging');
+    posterCarousel.setPointerCapture(event.pointerId);
+  }
+  posterCarousel.scrollLeft = carouselDragStartScroll - distance;
+});
+
+const finishCarouselDrag = (event) => {
+  if (event.pointerId !== carouselPointerId) return;
+  if (posterCarousel?.hasPointerCapture(event.pointerId)) posterCarousel.releasePointerCapture(event.pointerId);
+  carouselPointerId = null;
+  posterCarousel?.classList.remove('is-dragging');
+  requestAnimationFrame(updateCarouselStatus);
+  if (carouselDragged) setTimeout(() => { carouselDragged = false; }, 0);
+};
+
+posterCarousel?.addEventListener('pointerup', finishCarouselDrag);
+posterCarousel?.addEventListener('pointercancel', finishCarouselDrag);
+
 carouselButtons.forEach((button) => {
   button.addEventListener('click', () => {
     if (!posterCarousel) return;
     const direction = button.dataset.carouselDirection === 'next' ? 1 : -1;
+    const firstSlide = posterSlides[0];
+    const gap = Number.parseFloat(getComputedStyle(posterCarousel).columnGap) || 16;
+    const step = firstSlide ? firstSlide.offsetWidth + gap : posterCarousel.clientWidth * .76;
     posterCarousel.scrollBy({
-      left: posterCarousel.clientWidth * 0.76 * direction,
+      left: step * direction,
       behavior: reduceMotion ? 'auto' : 'smooth'
     });
   });
 });
 
 posterSlides.forEach((slide) => {
-  slide.addEventListener('click', () => {
+  slide.addEventListener('click', (event) => {
+    if (carouselDragged) {
+      event.preventDefault();
+      return;
+    }
     if (!posterDialog || !posterDialogImage || !posterDialogTitle) return;
     posterDialogImage.src = slide.dataset.posterSrc;
     posterDialogImage.alt = slide.dataset.posterTitle;
