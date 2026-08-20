@@ -239,9 +239,9 @@ button {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(390px, 0.85fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(370px, 0.8fr);
   align-items: center;
-  gap: 76px;
+  gap: 60px;
 }
 
 .eyebrow,
@@ -267,9 +267,10 @@ button {
 }
 
 .hero h1 {
-  max-width: 800px;
+  max-width: 760px;
   margin: 0;
-  font-size: clamp(3.4rem, 6.2vw, 6.7rem);
+  padding-right: 0.08em;
+  font-size: clamp(3.4rem, 5.75vw, 6rem);
   line-height: 0.95;
   letter-spacing: -0.064em;
   font-weight: 720;
@@ -281,6 +282,9 @@ button {
   background: linear-gradient(100deg, #0871e9 8%, #7c62e8 55%, #cf5a91 100%);
   background-clip: text;
   -webkit-background-clip: text;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-right: 0.06em;
   font-style: normal;
 }
 
@@ -621,61 +625,33 @@ button {
   font-weight: 700;
 }
 
-.principle-symbol {
+.transfer-visual {
   height: 155px;
   display: grid;
   place-items: center;
 }
 
-.symbol-focus {
-  position: relative;
+.transfer-visual svg {
+  width: 100%;
+  height: 100%;
+  max-width: 170px;
+  overflow: visible;
 }
 
-.symbol-focus i {
-  position: absolute;
-  border: 1px solid #779af0;
-  border-radius: 50%;
+@keyframes transfer-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
-.symbol-focus i:nth-child(1) { width: 104px; height: 104px; opacity: .3; }
-.symbol-focus i:nth-child(2) { width: 66px; height: 66px; opacity: .6; }
-.symbol-focus i:nth-child(3) { width: 18px; height: 18px; background: #8dacff; box-shadow: 0 0 28px #527de0; }
-
-.symbol-translate {
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+@keyframes transfer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .48; }
 }
 
-.symbol-translate i {
-  width: 74px;
-  height: 88px;
-  border-radius: 50% 50% 44% 56%;
-  background: linear-gradient(145deg, #426bd2, #a07aed);
-  filter: saturate(.85);
-}
-
-.symbol-translate i:last-child {
-  border-radius: 52% 48% 58% 42%;
-  background: linear-gradient(145deg, #ec74aa, #756deb);
-  transform: translateY(17px);
-}
-
-.symbol-experience {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-}
-
-.symbol-experience i {
-  width: 9px;
-  border-radius: 6px;
-  background: linear-gradient(#8dabff, #8e6ee7);
-}
-
-.symbol-experience i:nth-child(1), .symbol-experience i:nth-child(5) { height: 30px; }
-.symbol-experience i:nth-child(2), .symbol-experience i:nth-child(4) { height: 70px; }
-.symbol-experience i:nth-child(3) { height: 118px; }
+.transfer-float { animation: transfer-float 4s ease-in-out infinite; }
+.transfer-pulse { animation: transfer-pulse 3s ease-in-out infinite; transform-origin: center; }
+.transfer-pulse-light { animation: transfer-pulse 2.4s ease-in-out infinite; }
+.transfer-pulse-delay { animation-delay: .3s; }
 
 .principle-card h3 {
   margin: auto 0 8px;
@@ -752,21 +728,22 @@ button {
 }
 
 .collage-main {
-  width: 68%;
-  height: 79%;
-  left: 7%;
-  top: 11%;
+  width: 72%;
+  height: 84%;
+  left: 5%;
+  top: 8%;
   transform: rotate(-2deg);
 }
 
 .collage-small {
   width: 34%;
-  height: 37%;
-  right: 5%;
+  height: 28%;
+  right: 4%;
 }
 
-.collage-top { top: 8%; transform: rotate(3deg); }
-.collage-bottom { bottom: 8%; transform: rotate(-1deg); }
+.collage-top { top: 5%; transform: rotate(3deg); }
+.collage-middle { top: 36%; transform: rotate(-1deg); }
+.collage-bottom { bottom: 5%; transform: rotate(2deg); }
 
 .project-content {
   padding: 34px 38px 38px;
@@ -1129,6 +1106,12 @@ button {
   object-fit: contain;
   object-position: center;
   background: #fff;
+}
+
+.poster-slide span {
+  min-height: 28px;
+  line-height: 1.35;
+  letter-spacing: .055em;
 }
 
 .poster-slide:hover,
@@ -1551,7 +1534,7 @@ button {
   .transfer-heading > p, .section-heading-row > p { max-width: 520px; }
   .principle-grid { grid-template-columns: 1fr; }
   .principle-card { min-height: 310px; }
-  .principle-symbol { height: 120px; }
+  .transfer-visual { height: 120px; }
   .project-grid { grid-template-columns: 1fr; }
   .project-card-feature { grid-column: auto; grid-template-columns: 1fr; }
   .project-image { min-height: 430px; }
